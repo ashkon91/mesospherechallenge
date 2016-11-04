@@ -91,11 +91,14 @@ public class ControlSystem implements ElevatorControlSystem{
 						int compDist = Math.abs(closestE.currFloor - x);
 						if( distance < compDist){
 							closestE = elevators.get(a);
+							for(Passenger p : temp){
+								p.setInc(closestE.elevatorId);
+							}
 							System.out.println("NEW CLOSEST: " + elevators.get(a).elevatorId);
 						}
 					}
 				}
-				
+				waitingPassengers.set(x, temp);
 				if(closestE.elevatorId == -1) continue;
 				elevators.get(closestE.elevatorId).setGoalFloor(x);
 				//elevators.set(closestE.elevatorId, closestE);
@@ -122,6 +125,9 @@ public class ControlSystem implements ElevatorControlSystem{
 			if(p.direction == e.direction || e.direction == 0){
 				leavingPas.add(p);
 				e.direction = p.direction;
+				if(p.getInc() != elevId){
+					elevators.get(p.getInc()).deschedule();
+				}
 			}
 			else{
 				stayingPas.add(p);

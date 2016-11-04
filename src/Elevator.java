@@ -55,6 +55,10 @@ public class Elevator {
 			return false;
 	}
 	
+	public void deschedule(){
+		direction = 0;
+		goalFloor = -1;
+	}
 	
 	//Checks for someone leaving and stops elevator for them
 	public boolean hasRiderForCurrDestination(){
