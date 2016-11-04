@@ -14,6 +14,8 @@ update(Int, Int, Int) //Given an ID, update the floor, update goal floor
 pickup(Int, Int) //Set a pickup request from current floor to goal floor
 step() //Step once time cycle
 
+I didnt opt to use the update method as it's functionality was handled by a few other methods within my Elevator and ControlSystem class.
+
 How I tackled the problem:
 I taclked this problem by creating 3 classes.
 -ControlSystem
