@@ -1,6 +1,7 @@
 How to build:
 I built this project in Java using Eclipse as my IDE. Ideally you can open up the project file in eclipse and run the ElevatorDriver with the tests cases you would like to use. 
 
+Files can be located in the SRC/ folder
 Alternatively in terminal with a Java compiler:
 javac ElevatorDriver.java
 java ElevatorDrive
