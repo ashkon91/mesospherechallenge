@@ -54,6 +54,7 @@ public class ControlSystem implements ElevatorControlSystem{
 	@Override
 	public void pickup(int floorId, int goalFloor) {
 		//No need for elevator if they are already at their destination floor
+		System.out.println("Passenger request at floor: " + floorId + " to go to floor: " + goalFloor);
 		if(floorId == goalFloor) return;
 		int direction;
 		if(floorId > goalFloor) 
@@ -68,7 +69,6 @@ public class ControlSystem implements ElevatorControlSystem{
 	@Override
 	//Step function for elevator system
 	public void step() {
-		System.out.println("TEST");
 		//Checks if the elevators have a passenger to unload/load for the current floor
 		for(int x = 0; x < elevators.size(); x++){
 			
@@ -100,11 +100,9 @@ public class ControlSystem implements ElevatorControlSystem{
 								//Deschedule for new closest
 								if(p.getInc() != -1){
 									if(closestE.isEmpty()){
-										System.out.println("EMPTY");
 									}
 								}
 								
-								System.out.println("SET");
 								p.setInc(closestE.elevatorId);
 							}
 						}
@@ -113,7 +111,6 @@ public class ControlSystem implements ElevatorControlSystem{
 				
 				//Sets passengers with new elevator values 
 				waitingPassengers.set(x, temp);
-				System.out.println("Set: " + closestE.elevatorId + "  to floor:  " + x);
 
 				if(closestE.elevatorId == -1) continue;
 				elevators.get(closestE.elevatorId).setGoalFloor(x);
