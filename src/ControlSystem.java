@@ -8,6 +8,7 @@ public class ControlSystem implements ElevatorControlSystem{
 	ArrayList<ArrayList<Passenger>> waitingPassengers;
 	public final static int ELEVATOR_MAX = 16;
 	
+	//Requires a # of elevators and floors
 	public ControlSystem(int numOfElevators, int floors){
 		if(numOfElevators > ELEVATOR_MAX) numOfElevators = ELEVATOR_MAX;
 		buildElevators(numOfElevators);
@@ -15,10 +16,7 @@ public class ControlSystem implements ElevatorControlSystem{
 		
 	}
 	
-	
-
-
-
+	//Builds the floors based on the int input
 	private void buildFloors(int floors) {
 		waitingPassengers = new ArrayList<>(floors);
 		for(int x = 0; x < floors; x++){
@@ -28,10 +26,7 @@ public class ControlSystem implements ElevatorControlSystem{
 		
 	}
 
-
-
-
-
+	//Builds elevators based on the int input
 	private void buildElevators(int numOfElevators) {
 		for(int x = 0; x < numOfElevators; x++){
 			Elevator newElev = new Elevator(x,x);
@@ -39,6 +34,8 @@ public class ControlSystem implements ElevatorControlSystem{
 		}
 		
 	}
+	
+	//Returns the status of all elevators
 	@Override
 	public void status() {
 		for(Elevator e : elevators){
@@ -69,44 +66,63 @@ public class ControlSystem implements ElevatorControlSystem{
 	}
 
 	@Override
+	//Step function for elevator system
 	public void step() {
-		System.out.println("STEP");
+		System.out.println("TEST");
+		//Checks if the elevators have a passenger to unload/load for the current floor
 		for(int x = 0; x < elevators.size(); x++){
 			
 			if(loadPassengers(elevators.get(x).currFloor, elevators.get(x).elevatorId)){
 				continue;
 			}
+			//Elevator moves if no passengers to unload
 			else{
 				elevators.get(x).elevatorStep(elevators.get(x).direction);
 			}
 		}
 		
+		//Greedy solution which sets the closest elevator to go to the floor with passengers
 		for(int x = 0; x < waitingPassengers.size(); x++){
+			
 			ArrayList<Passenger> temp = waitingPassengers.get(x);
+			//Checks each floor for waiting passengers
 			if(!temp.isEmpty()){
 				Elevator closestE = new Elevator(-1, Integer.MAX_VALUE);
+				//Finds the closest elevator
 				for(int a = 0; a < elevators.size(); a++){
 					if(elevators.get(a).direction == 0){
 						int distance = Math.abs(elevators.get(a).currFloor - x);
 						int compDist = Math.abs(closestE.currFloor - x);
 						if( distance < compDist){
 							closestE = elevators.get(a);
+							//Sets the passengers incoming elevator to that of the closest elevator
 							for(Passenger p : temp){
+								//Deschedule for new closest
+								if(p.getInc() != -1){
+									if(closestE.isEmpty()){
+										System.out.println("EMPTY");
+									}
+								}
+								
+								System.out.println("SET");
 								p.setInc(closestE.elevatorId);
 							}
-							System.out.println("NEW CLOSEST: " + elevators.get(a).elevatorId);
 						}
 					}
 				}
+				
+				//Sets passengers with new elevator values 
 				waitingPassengers.set(x, temp);
+				System.out.println("Set: " + closestE.elevatorId + "  to floor:  " + x);
+
 				if(closestE.elevatorId == -1) continue;
 				elevators.get(closestE.elevatorId).setGoalFloor(x);
-				//elevators.set(closestE.elevatorId, closestE);
 			}
 		}
 		
 	}
 	
+	//Loads the passengers on and off the elevator
 	public boolean loadPassengers(int currFloor, int elevId){
 		
 		int initFloorSize = waitingPassengers.get(currFloor).size();
@@ -125,23 +141,29 @@ public class ControlSystem implements ElevatorControlSystem{
 			if(p.direction == e.direction || e.direction == 0){
 				leavingPas.add(p);
 				e.direction = p.direction;
+				//If picked up from a different elevator than originally scheduled deschedule original elevator
 				if(p.getInc() != elevId){
+					if(p.getInc() == -1) continue;
 					elevators.get(p.getInc()).deschedule();
 				}
 			}
+			//Keep passengers on the floor for opposite direction
 			else{
 				stayingPas.add(p);
 			}
 		}
 		
+		//Sets the passengers for the current floor
 		waitingPassengers.set(currFloor, stayingPas);
 		
+		//Adds riders to the elevator
 		for(int x = 0; x < leavingPas.size(); x++){
 			e.addRider(leavingPas.get(x));
 		}
 		
 		elevators.set(elevId, e);
 		
+		//Returns bool if passengers were leaving for the floor or got on at the floor
 		if(initFloorSize !=   waitingPassengers.get(currFloor).size()) 
 			return true;
 		else

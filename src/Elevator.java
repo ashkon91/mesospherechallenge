@@ -8,6 +8,7 @@ public class Elevator {
 	
 	public ArrayList<Passenger> passengers = new ArrayList<>();
 	
+	//Elevator constructor
 	public Elevator(int id, int currFloor){
 		this.elevatorId = id;
 		this.currFloor = currFloor;
@@ -15,6 +16,7 @@ public class Elevator {
 		this.goalFloor = -1;
 	}
 	
+	//Adds a rider to the elevator
 	public void addRider(Passenger p){
 		if(direction == 1 && p.dest > goalFloor) 
 			goalFloor = p.dest;
@@ -24,6 +26,7 @@ public class Elevator {
 		passengers.add(p);
 	}
 	
+	//Changes the direction of the elevator
 	public void changeDirection(int dir){
 		if(dir > -2 && dir < 2)
 			this.direction = dir;
@@ -31,13 +34,14 @@ public class Elevator {
 			System.out.println("Invalid durection for Elevator: " + this.elevatorId);
 	}
 	
+	//Moves the elevator +1, -1, 0 based on input direction
 	public void elevatorStep(int dir){
 		if(this.hasRiderForCurrDestination())
 			return;
 		currFloor += dir;
-
 	}
 	
+	//Returns if the elevator is currently in use
 	public boolean inUse(){
 		if(passengers.isEmpty() && direction == 0)
 			return false;
@@ -45,6 +49,7 @@ public class Elevator {
 			return true;
 	}
 	
+	//Returns if the elevator is empty
 	public boolean isEmpty(){
 		if(passengers.isEmpty()){
 			direction = 0;
@@ -55,6 +60,7 @@ public class Elevator {
 			return false;
 	}
 	
+	//Deschedules the elevator
 	public void deschedule(){
 		direction = 0;
 		goalFloor = -1;
@@ -80,7 +86,8 @@ public class Elevator {
 		return passengers.size() == initSize ? false : true;
 		
 	}
-
+	
+	//Changes the goal floor of the elevator
 	public void setGoalFloor(int x) {
 		this.goalFloor = x;
 		int calc = x - currFloor;
